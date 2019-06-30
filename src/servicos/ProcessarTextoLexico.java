@@ -31,6 +31,7 @@ public final class ProcessarTextoLexico {
         Set<TabelaSemantica> tabelaSemantica = new HashSet<>();
         boolean declarando = false;
         boolean procedure = false;
+        String operandoChave = null;
 
         for (int i = 0; i < codigoTexto.length(); i++) {
             caracterAtual = String.valueOf(codigoTexto.charAt(i));
@@ -116,12 +117,26 @@ public final class ProcessarTextoLexico {
                                     }
                                     tabelaSemantica.add(objSemantico);
                                 } else {
-                                    throw new Exception("Variavel "+objSemantico.getNome()+" já declarada na linha "+linha);
+                                    throw new Exception("Variavel "+objSemantico.getNome()+" já declarada. Erro na linha "+linha);
                                 }
                             } else {
-                                if (!tabelaSemantica.contains(objSemantico)) {
-                                    throw new Exception("Variavel "+objSemantico.getNome()+" não declarada na linha "+linha);
+                                List<TabelaSemantica> listaTabelaSemantica = new ArrayList<>(tabelaSemantica);
+                                 
+                                if (!listaTabelaSemantica.contains(objSemantico)) {
+                                    throw new Exception("Variavel "+objSemantico.getNome()+" não declarada. Erro na linha "+linha);
                                 }
+                                
+                                objSemantico = listaTabelaSemantica.get(listaTabelaSemantica.indexOf(objSemantico));
+                                
+                                if (operandoChave != null && !operandoChave.trim().isEmpty()){                                   
+                                    int indexOperando = listaTabelaSemantica.indexOf(new TabelaSemantica(operandoChave.toUpperCase(), null, nivel));
+                                    if (indexOperando > -1){
+                                        TabelaSemantica objSemanticoChave = listaTabelaSemantica.get(indexOperando);
+                                        if (!objSemanticoChave.getTipo().equals(objSemantico.getTipo())){
+                                            throw new Exception("Para realizar operação tipos devem ser iguais");
+                                        }
+                                    }                                    
+                                }                                
                             }
 
                         }
@@ -137,8 +152,17 @@ public final class ProcessarTextoLexico {
                     CodigoCaracteresEspeciaisTerminaisEnum codigoCaracterEspecialEnum = CodigoCaracteresEspeciaisTerminaisEnum.getCodigo(caracterAuxiliar);
                     if (codigoCaracterEspecialEnum != null) {
                         pilha.push(codigoCaracterEspecialEnum.getPilha(linha));
+                        
                         if (utilizarCaracterSequente) {
                             i++;
+                        }
+                        
+                        if (codigoCaracterEspecialEnum.equals(CodigoCaracteresEspeciaisTerminaisEnum.DOIS_PONTOS_IGUAL)){
+                            operandoChave = pilha.get(pilha.size() - 2).getDescricao();
+                        } 
+                        
+                        if (codigoCaracterEspecialEnum.equals(CodigoCaracteresEspeciaisTerminaisEnum.PONTO_VIRGULA)){
+                            operandoChave = null;
                         }
                     }
                 }
