@@ -113,7 +113,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
         jTextAreaPagina.setWrapStyleWord(true);
         jScrollPagina.setViewportView(jTextAreaPagina);
 
-        jPanelFundoLog.setBorder(javax.swing.BorderFactory.createTitledBorder("Mensagens"));
+        jPanelFundoLog.setBorder(javax.swing.BorderFactory.createTitledBorder("Console"));
 
         jTextAreaLog.setEditable(false);
         jTextAreaLog.setColumns(20);
@@ -503,18 +503,17 @@ public class TelaPrincipal extends javax.swing.JFrame {
 
         try {
             limparPilhas();
-            addLog("Analisando (Léxico)...");
             setPilhaLexica(ProcessarTextoLexico.criarPilha(jTextAreaPagina.getText()));
             Collections.reverse(getPilhaLexica());
             criarTabelaLexica(getPilhaLexica());
             criarTabelaSintatica(getPilhaSintatica());
-            addLog("Finalizado (Léxico).");
+            addLog("Análise léxica finalizada.");
         } catch (Exception ex) {
             Logger.getLogger(TelaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
             limpar(false);
             jTextAreaLog.setForeground(Color.red);
-            addLog("Erro:");
-            addLog(ex.getMessage());
+            addLog("Erro: " + ex.getMessage());
+            
         }
 
         showLogs();
@@ -542,7 +541,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
             analisarSintaxe();
 
             if (getPilhaLexica().isEmpty() && getPilhaSintatica().isEmpty()) {
-                addLog("Sintatico finalizado.");
+                addLog("Análise sintática finalizada.");
             }
 
         } catch (Exception ex) {
@@ -567,7 +566,9 @@ public class TelaPrincipal extends javax.swing.JFrame {
             while (!getPilhaLexica().isEmpty()) {
                 analisarSintaxe();
             }
-            addLog("Sintatico finalizado.");
+            addLog("Análise sintática finalizada.");
+            addLog("Compilado com sucesso.");
+            jTextAreaLog.setForeground(Color.GREEN.darker().darker());
         } catch (Exception ex) {
             jTextAreaLog.setForeground(Color.red);
             addLog(ex.getMessage());

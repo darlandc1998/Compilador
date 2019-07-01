@@ -5,10 +5,9 @@ import enums.parsing.TabelaParsingEnum;
 import enums.terminais.CodigoCaracteresEspeciaisTerminaisEnum;
 import enums.terminais.CodigoComentarioTerminaisEnum;
 import enums.terminais.CodigoPalavrasTerminaisEnum;
-import java.util.Set;
 import java.util.Stack;
 import models.Pilha;
-import models.TabelaSemantica;
+
 
 public final class ProcessarTextoSintatico {
 
@@ -27,7 +26,7 @@ public final class ProcessarTextoSintatico {
                 pilhaSintatica.pop();
                 pilhaLexica.pop();
             } else {
-                throw new Exception("Erro sintático '" + getProximoValorTerminal(pilhaSintatica).getDescricao() + "' na linha " + (pLexica.getLinha() - 1));
+                throw new Exception("Erro '" + getProximoValorTerminal(pilhaSintatica).getDescricao() + "' - linha " + (pLexica.getLinha() - 1));
             }
 
         } else {
@@ -61,7 +60,7 @@ public final class ProcessarTextoSintatico {
                 }
 
             } else {
-                throw new Exception("Erro de sintático '" + getProximoValorTerminal(pilhaSintatica).getDescricao() + "' na linha " + (pLexica.getLinha() - 1));
+                throw new Exception("Erro '" + getProximoValorTerminal(pilhaSintatica).getDescricao() + "' - linha " + (pLexica.getLinha() - 1));
             }
         }
         
